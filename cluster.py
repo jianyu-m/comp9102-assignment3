@@ -24,7 +24,7 @@ if __name__ == "__main__":
             arr[fr - 1][to - 1] = 1
             arr[to - 1][fr - 1] = 1
 
-    N = 100
+#    N = 100
 
     # arr = numpy.array([[0, 1, 0, 1, 1],
     #                    [1, 0, 0, 0, 1],

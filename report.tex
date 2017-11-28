@@ -1,90 +1,81 @@
 \documentclass{article}
-
+\usepackage{amsmath}
 \makeatletter
 
 \def\v#1{{\fontfamily{cmtt}\selectfont #1}}
 
 
-\title{Nearest Neighbor Search}
+\title{Using Clustering for Community Search}
 \author{Jianyu Jiang (3030044036)}
 
 \begin{document}
 
 \maketitle
 \section{Problem Definition}
-In this assignment, you are required to implement and benchmark nearest
-neighbour similarity queries using
-the two-step and multi-step similarity search
-algorithms. The algorithms should take as input a query
-vector q and should compute the nearest neighbour p of q.
+In this assignment, you are required to implement and benchmark community search
+algorithm using clustering.
+The algorithms should first compute user similarity by
+vertex similarity and personal page-rank
+and should perform a K-means clustering.
 
 \section{Design and Implementation}
-The algorithm has three steps. First, we do a Principle Component Analysis (PCA)
-on the dataset. Second, we construct a R-Tree with the dataset in the principle
-space. At last, we run the two step and multi-step nearest neighbour search.
+The algorithm has three steps. First, we compute the similarity matrix
+by vertex similarity or personalized PageRank. Then, we perform
+a K-Means algorithm with this similarity matrix. Then, we compare
+the K-Means results.
 
-\subsection{Principle Component Analysis (PCA)}
-For a dataset array $X_{nxd}$, we first centre $X$ and get $X'$. Then,
-we run a SVD on $X'$, so that $X' = USV^T$. We get the principle component
-$G = U_{n*k}S_{k*k}$. We then insert $G$ into the R-Tree. For a query $q$,
-we get its corresponding vector $q'$ by $q' = qV_{n*k}$.
+We compare the result with three models: Purity, Entropy
+and Normalized mutual information (NMI).
+
+If $W = {w_1, w_2, ..., w_k}$ is the set of clusters and
+$C = {c_1, c_2, ..., c_j}$ is the set classes. Then,
+
+\begin{align}
+  purity(W, C) = \dfrac{1}{N}\sum\limits_{k}\max_j{w_j \bigcap c_j}
+\end{align}.
+a perfect clustering has a purity of 1.
+
+For entropy,
+
+\begin{align}
+  H(W) = -\sum\limits_kP(w_k)logP(w_k) = -\sum\limits_k\dfrac{|w_k|}{N}log\dfrac{|w_k|}{N}
+\end{align}
+
+The minimum of $H(W)$ is 0 if the clustering is random with respect to class
+membership. In that case, knowing that a document
+is in a particular cluster does not give us any new information
+about what its class might be.
+
+For NMI, it is always a value between 0 to 1.
 
 
-\subsection{Nearest Neighbour Search}
-To find the nearest neighbour for a query $q'$, we conduct a two-step and a multi-step
-nearest neighbour search. For two-step search, we use the $D$ we calculate in
-the reduced space and do a range search of [$q' - D$, $q' + D$]. After that, we
-get the final result by comparing all data in the range search.
+\subsection{Design and Implementation}
+We implemented the algorithm using python. We implemented
+the personalized PageRank ourselves and use KMeans implementation
+from sklearn.
 
-For the multi-step search, we do incremental R-Tree queries until the distance
-in reduced space
-is larger than the distance in the original space.
-For the two-step neighbour search, we use $D$ as the upper bound distance between
-the query $q$ and the neighbour $p$ in reduced space. Suppose we find the nearest
-neighbour $ |g' - q'| = min(|p' - q'|)$ in reduced space and $y$ is the nearest neighbour
-of $q$. Then, we need to prove that $d(g, q) \geq d(y', q')$. \\
-\textbf{Proof} If $d(g, q) \geq d(y', q')$ is not fulfilled, then $d(g, q) < d(y', q')$.
-We have
-$|g - q||V_{dk}| = |g' - q'| < |y' - q'||V_{dk}|$
-then $|g' - q'| < min(|y' - q'||V_{dk}|) = |g' - q'||V_{dk}|$, but
-$|V_{dk}| \leq 1$. Thus, we have $d(g, q) \geq d(y', q')$.
 
 \subsection{Benchmark}
-Evaluation of the algorithm is focused of the time of constructing the R-Tree
-and the average query time.
-Queries were generated randomly and
-these queries are served to the nearest neighbor search system.
-The average
-query time for 1k queries is recorded. A simple linear scan algorithm is
-used for comparison. The result is showed in Table \ref{result}.
+Evaluation of the algorithm is focused of Purity, Entropy and NMI
+of using different similarity matrix and size of clusters.
 
 \begin{table}[tbh]
   \center
   \footnotesize
-  \begin{tabular}{c|c|c|c|c}
-    \textbf{k} & \textbf{Indexing} & \textbf{Two-Step} & \textbf{Multi-Step} & \textbf{Linear}\\
+  \begin{tabular}{c|c|c|c|c|c|c}
+    \textbf{k} & \textbf{Purity-PR} & \textbf{Purity} & \textbf{Entropy-PR} & \textbf{Entropy} & \textbf{NMI-PR} & \textbf{NMI} \\
     \hline
-    5 & 80.6s & 439ms & 639ms & 350ms\\
+    2 & 0.5459 & 1 & 0.01233 & 1 & 0.02577 \\
     \hline
-    10 & 125s & 468ms & 695ms & 350ms \\
+    4 & 0.5470 & 1 & 0.0257 & 1 & 0.00488 \\
     \hline
-    15 & 165s & 512ms & 726ms & 350ms \\
+    8 & 0.5481 & 1 & 0.4995 & 1 & 0.00545 \\
     \hline
-    20 & 167s & 578ms & 748ms & 342ms \\
-    \hline
-    25 & 193s & 627ms & 287ms & 350ms \\
-    \hline
-    28 & 206.8s & 642ms & 198ms & 344ms \\
+    16 & 0.5765 & 1 & 1.042 & 1 & 0.01531 \\
   \end{tabular}
   \caption{Evaluation result.}
   \label{result}
 \end{table}
 
-Table~\ref{result} shows that linear search outperforms two-step and multi-step
-nearest neighbour search when k is less than 25. This is because the principle
-component of $X$ get 99\% information of the original $X$ when k is larger than
-25. For two-step nearest
-neighbour search, the distance $D$ is not a good estimation of the reduced
-dimension, causing a bad performance.
 
 \end{document}

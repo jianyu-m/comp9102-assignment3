@@ -9,7 +9,7 @@ def log_e(d, e):
     if d == 0:
         return 0
     else:
-        return - d * math.log(d / e)
+        return - d / e * math.log(d / e)
 
 if __name__ == "__main__":
     arr = numpy.zeros((N, N))

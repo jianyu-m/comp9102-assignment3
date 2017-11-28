@@ -9,7 +9,7 @@ def log_e(d, e):
     if d == 0:
         return 0
     else:
-        return - d * math.log2(d / e)
+        return - d / e * math.log2(d / e)
 
 if __name__ == "__main__":
     p = numpy.load("parr")

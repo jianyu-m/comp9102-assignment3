@@ -35,13 +35,14 @@ if __name__ == "__main__":
 
     all_set = []
     for i in range(N):
-        se = {}
-        for j in arr[i]:
-            if j != 0:
-                se += j
+        se = set()
+        for j in range(N):
+            if arr[i][j] != 0:
+                se.add(j)
         all_set.append(se)
-
+    print("init")
     for i in range(0, N):
+        print(str(i))
         for j in range(i + 1, N):
             same = len(all_set[i] & all_set[j])
             sor = len(all_set[i] | all_set[j])

@@ -20,7 +20,7 @@ def log_ce(wc, w, c, n):
 
 
 if __name__ == "__main__":
-    p = numpy.load("parr")
+    p = numpy.load("com")
     points = kmeans(k).fit(p)
 
     # compute purity

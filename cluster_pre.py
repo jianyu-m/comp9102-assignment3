@@ -12,8 +12,7 @@ def log_e(d, e):
         return - d * math.log2(d / e)
 
 if __name__ == "__main__":
-    p = numpy.fromfile("parr")
-
+    p = numpy.load("parr")
     points = kmeans(2).fit(p)
 
     # compute purity

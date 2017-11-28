@@ -3,6 +3,7 @@ from sklearn.cluster import KMeans as kmeans
 import math
 
 N = 18576
+k = 2
 alpha = .1
 
 def log_e(d, e):
@@ -12,7 +13,7 @@ def log_e(d, e):
         return - d / e * math.log2(d / e)
 
 def log_ce(wc, w, c, n):
-    if N == 0:
+    if n == 0:
         return 0
     else:
         return wc / n * math.log2(n * wc / (w * c))
@@ -34,57 +35,51 @@ if __name__ == "__main__":
             label = int(line.split(" ")[1])
             labels[point] = label
 
-    class_0 = {"Clinton": 0, "Trump": 0}
-    class_1 = {"Clinton": 0, "Trump": 0}
+    class_set = [{"Clinton": 0, "Trump": 0} for i in range(k)]
+
     total = 0
     for idx, p in enumerate(points.labels_):
         if idx not in labels:
             continue
         total += 1
-        if p == 0:
-            if labels[idx] == 0:
-                class_0["Clinton"] += 1
-            else:
-                class_0["Trump"] += 1
+        if labels[idx] == 0:
+            class_set[p]["Clinton"] += 1
         else:
-            if labels[idx] == 0:
-                class_1["Clinton"] += 1
-            else:
-                class_1["Trump"] += 1
+            class_set[p]["Trump"] += 1
 
-    if class_0["Clinton"] > class_0["Trump"]:
-        class_0_label = "Clinton"
-    else:
-        class_0_label = "Trump"
+    label_set = []
+    for r in class_set:
+        if r["Clinton"] > r["Trump"]:
+            label_set.append("Clinton")
+        else:
+            label_set.append("Trump")
 
-    if class_1["Clinton"] > class_1["Trump"]:
-        class_1_label = "Clinton"
-    else:
-        class_1_label = "Trump"
-
-    purity = (class_0[class_0_label] + class_1[class_1_label]) / total
+    purity = 0
+    for idx, label in enumerate(label_set):
+        purity += class_set[idx][label]
+    purity = purity / total
 
     # compute entropy
 
-    class_0_total = 0
-    for k, v in class_0.items():
-        class_0_total += v
+    class_total = [c["Clinton"] + c["Trump"] for c in class_set]
 
-    class_1_total = 0
-    for k, v in class_1.items():
-        class_1_total += v
+    entropy = 0
 
-    entropy = log_e(class_0_total, total) + log_e(class_1_total, total)
+    for c in class_total:
+        entropy += log_e(c, total)
 
     # compute NMI
-    clinton = class_0["Clinton"] + class_1["Clinton"]
-    trump = class_0["Trump"] + class_1["Trump"]
+    clinton = 0
+    trump = 0
+    for c in class_set:
+        clinton += c["Clinton"]
+        trump += c["Trump"]
+
     HC = log_e(clinton, total) + log_e(trump, total)
 
-    ioc = log_ce(class_0["Trump"], class_0_total, trump, total) \
-            + log_ce(class_0["Clinton"], class_0_total, clinton, total) \
-            + log_ce(class_1["Trump"], class_1_total, trump, total) \
-            + log_ce(class_1["Clinton"], class_1_total, clinton, total)
+    ioc = 0
+    for idx, c in enumerate(class_set):
+        ioc += log_ce(c["Trump"], class_total[idx], trump, total) + log_ce(c["Clinton"], class_total[idx], clinton, total)
 
     NMI = ioc / ((entropy + HC) / 2)
 

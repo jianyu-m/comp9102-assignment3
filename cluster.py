@@ -44,7 +44,7 @@ if __name__ == "__main__":
                 A[i][j] = 0
 
     e = numpy.zeros((N, N))
-    p = numpy.ones((N, N))
+    p = numpy.zeros((N, N))
     for i in range(N):
         for j in range(N):
             if arr[i][j] == 1:
@@ -57,10 +57,16 @@ if __name__ == "__main__":
     convergence = 10e-5
     tmp = 100
 
+    print("start")
     while tmp > convergence:
+        print("iter start")
         p_now = (1 - alpha) * numpy.dot(A, p) + alpha * e
+        print("iter fin")
         tmp = sum(sum((p_now - p)**2))
         p = p_now
+        print(str(tmp))
+
+    p.dump("parr")
 
     points = kmeans(2).fit(p)
 

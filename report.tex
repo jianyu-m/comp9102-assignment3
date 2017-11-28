@@ -58,6 +58,7 @@ from sklearn.
 \subsection{Benchmark}
 Evaluation of the algorithm is focused of Purity, Entropy and NMI
 of using different similarity matrix and size of clusters.
+Table~\ref{result} shows the result.
 
 \begin{table}[tbh]
   \center
@@ -65,13 +66,13 @@ of using different similarity matrix and size of clusters.
   \begin{tabular}{c|c|c|c|c|c|c}
     \textbf{k} & \textbf{Purity-PR} & \textbf{Purity} & \textbf{Entropy-PR} & \textbf{Entropy} & \textbf{NMI-PR} & \textbf{NMI} \\
     \hline
-    2 & 0.5459 & 1 & 0.01233 & 1 & 0.02577 \\
+    2 & 0.5459 & 0.5754 & 0.01233 & 0.7395 & 0.02577 & 0.0123 \\
     \hline
-    4 & 0.5470 & 1 & 0.0257 & 1 & 0.00488 \\
+    4 & 0.5470 & 0.5940 & 0.0257 & 0.8900 & 0.00488 & 0.0286 \\
     \hline
-    8 & 0.5481 & 1 & 0.4995 & 1 & 0.00545 \\
+    8 & 0.5481 & 0.5946 & 0.4995 & 0.9424 & 0.00545 & 0.02910 \\
     \hline
-    16 & 0.5765 & 1 & 1.042 & 1 & 0.01531 \\
+    16 & 0.5765 & 0.5962 & 1.042 & 1.0290 & 0.01531 & 0.03244 \\
   \end{tabular}
   \caption{Evaluation result.}
   \label{result}

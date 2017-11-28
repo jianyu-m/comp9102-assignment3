@@ -3,7 +3,7 @@ from sklearn.cluster import KMeans as kmeans
 import math
 
 N = 18576
-k = 2
+k = 16
 alpha = .1
 
 def log_e(d, e):
@@ -13,7 +13,7 @@ def log_e(d, e):
         return - d / e * math.log2(d / e)
 
 def log_ce(wc, w, c, n):
-    if n == 0:
+    if wc == 0:
         return 0
     else:
         return wc / n * math.log2(n * wc / (w * c))
@@ -21,7 +21,7 @@ def log_ce(wc, w, c, n):
 
 if __name__ == "__main__":
     p = numpy.load("parr")
-    points = kmeans(2).fit(p)
+    points = kmeans(k).fit(p)
 
     # compute purity
     labels = {}

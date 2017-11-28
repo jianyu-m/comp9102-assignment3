@@ -11,6 +11,13 @@ def log_e(d, e):
     else:
         return - d / e * math.log(d / e)
 
+def log_ce(wc, w, c, n):
+    if N == 0:
+        return 0
+    else:
+        return wc / n * math.log2(n * wc / (w * c))
+
+
 if __name__ == "__main__":
     arr = numpy.zeros((N, N))
     with open("Graph.txt") as f:
@@ -105,8 +112,10 @@ if __name__ == "__main__":
     trump = class_0["Trump"] + class_1["Trump"]
     HC = log_e(clinton, total) + log_e(trump, total)
 
-    ioc = log_e(class_0["Clinton"], total) + log_e(class_0["Trump"], total) \
-            + log_e(class_1["Trump"], total) + log_e(class_1["Clinton"], total)
+    ioc = log_ce(class_0["Trump"], class_0_total, trump, total) \
+            + log_ce(class_0["Clinton"], class_0_total, clinton, total) \
+            + log_ce(class_1["Trump"], class_1_total, trump, total) \
+            + log_ce(class_1["Clinton"], class_1_total, clinton, total)
 
     NMI = ioc / ((entropy + HC) / 2)
 

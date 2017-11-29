@@ -58,13 +58,15 @@ from sklearn.
 \subsection{Benchmark}
 Evaluation of the algorithm is focused of Purity, Entropy and NMI
 of using different similarity matrix and size of clusters.
-Table~\ref{result} shows the result.
+Table~\ref{result} shows the result. Purity-S means the purity of
+using vertex similarity, while Purity-PR means the purity of using
+personalized PageRank.
 
 \begin{table}[tbh]
   \center
   \footnotesize
   \begin{tabular}{c|c|c|c|c|c|c}
-    \textbf{k} & \textbf{Purity-PR} & \textbf{Purity} & \textbf{Entropy-PR} & \textbf{Entropy} & \textbf{NMI-PR} & \textbf{NMI} \\
+    \textbf{k} & \textbf{Purity-PR} & \textbf{Purity-S} & \textbf{Entropy-PR} & \textbf{Entropy-S} & \textbf{NMI-PR} & \textbf{NMI-S} \\
     \hline
     2 & 0.5459 & 0.5754 & 0.01233 & 0.7395 & 0.02577 & 0.0123 \\
     \hline
